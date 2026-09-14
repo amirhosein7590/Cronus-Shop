@@ -28,8 +28,8 @@ import {
   DRACO_DECODER_PATH,
   WATCH_MODEL_PATH,
 } from "@/lib/constants";
-import { createGlassMaterial, upgradeMaterial } from "./materials";
-import { HOUR_HAND_MESH, ROLE_MAP, SECOND_HAND_MESH } from "./roleMap";
+import { upgradeMaterial } from "./materials";
+import { HOUR_HAND_MESH, SECOND_HAND_MESH } from "./roleMap";
 
 interface SceneOptions {
   isMobile?: boolean;
@@ -57,6 +57,7 @@ export class WatchScene {
   private clock = new Clock();
   private rafId = 0;
   private isMobile: boolean;
+  private readonly MOBILE_OFFSET_X = -0.5;
 
   // Scales the camera position so the watch stays fully in frame on
   // narrow viewports. Computed on resize, applied every frame.
@@ -224,13 +225,15 @@ export class WatchScene {
     // Pull the camera back proportionally on narrow viewports so the
     // watch keeps the same framing it has on a wide desktop viewport.
     const s = this.aspectScale;
+    const offsetX = this.isMobile ? this.MOBILE_OFFSET_X * s : 0;
+
     this.camera.position.set(
-      this.cameraState.px * s,
+      this.cameraState.px * s + offsetX,
       this.cameraState.py * s,
       this.cameraState.pz * s,
     );
     this.camTarget.set(
-      this.cameraState.tx,
+      this.cameraState.tx + offsetX,
       this.cameraState.ty,
       this.cameraState.tz,
     );
